@@ -4,6 +4,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
 
+// x
 class ProgressMeter extends JFrame {
 	BufferedReader keyboard =
     new BufferedReader(new InputStreamReader(System.in));
