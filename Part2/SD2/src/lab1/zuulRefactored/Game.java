@@ -24,6 +24,8 @@ public class Game
 {
     private Parser parser;
     private Room currentRoom; 
+    private Room prevRoom;
+    private Player player;
     /**
      * Create the game and initialise its internal map.
      */
@@ -31,6 +33,7 @@ public class Game
     {        
         Room startRoom = createRooms();      
         currentRoom = startRoom;
+        prevRoom = null;
         parser = new Parser();
     }
 
@@ -54,6 +57,8 @@ public class Game
         pub.addItem(new Item("beer", 0.5));
         pub.addItem(new Item("wine", 0.75));
         lab.addItem(new Item("computer", 30));
+        office.addItem(new Item("stapler", 0.5));
+        theatre.addItem(new Item("prop", 10));
         
         // initialise room exits
         outside.setExit("east", theatre);
@@ -75,8 +80,9 @@ public class Game
     /**
      *  Main play routine.  Loops until end of play.
      */
-    public void play() 
+    public void play(Player player) 
     {            
+    	this.player = player;
         printWelcome();
 
         // Enter the main command loop.  Here we repeatedly read commands and
@@ -96,7 +102,7 @@ public class Game
     private void printWelcome()
     {
         System.out.println();
-        System.out.println("Welcome to the World of Zuul!");
+        System.out.println(player.getPlayerName() + ", Welcome to the World of Zuul!");
         System.out.println("World of Zuul is a new, incredibly boring adventure game.");
         System.out.println("Type 'help' if you need help.");
         System.out.println();
@@ -121,9 +127,16 @@ public class Game
             printHelp();
         else if (commandWord.equals("go"))
             goRoom(command);
-        else if (commandWord.equals("quit")) {
+        else if (commandWord.equals("back"))
+        	goBack(command);
+        else if (commandWord.equals("quit")) 
             wantToQuit = quit(command);
-        }
+        else if (commandWord.equals("pickup"))
+        	pickupItem(command);
+        else if (commandWord.equals("drop"))
+        	dropItem(command);
+        else if (commandWord.equals("items"))
+        	printItems();
         return wantToQuit;
     }
 
@@ -151,7 +164,7 @@ public class Game
     {
         if(!command.hasSecondWord()) {
             // if there is no second word, we don't know where to go...
-            System.out.println("Go where?");
+            System.out.println("Go where, " + player.getPlayerName() + "?");
             return;
         }
 
@@ -164,9 +177,70 @@ public class Game
             System.out.println("There is no door!");
         }
         else {
+        	prevRoom = currentRoom;
             currentRoom = nextRoom;
-            System.out.println(currentRoom.getLongDescription());
+            System.out.println(player.getPlayerName() + ", " + currentRoom.getLongDescription());
         }
+    }
+    
+    protected void goBack(Command command) 
+    {
+    	if (prevRoom == null) {
+    		System.out.println("There is no room to go back to.");
+    	} else {
+    		Room temp = currentRoom;
+    		currentRoom = prevRoom;
+    		prevRoom = temp;
+    		System.out.println(currentRoom.getLongDescription());
+    	}
+    }
+    
+    private void pickupItem(Command command)
+    {
+    	if (!command.hasSecondWord())
+    		System.out.println("You haven't selected anything to pick up");
+    	else {
+    		String item = command.getSecondWord();
+    		boolean pickedUp = false;
+    	
+    		for (Item i : currentRoom.getItems()) {
+    			if (item.equals(i.getDescription()))
+    				pickedUp = player.pickUpItem(i);
+    				currentRoom.removeItem(i);
+    				break;
+    		}
+    		
+    		if (!pickedUp) 
+    			System.out.println("Could not pick up that item: too heavy or non-existant");
+    		else
+    			System.out.println("You picked up an item: " + item);
+    	}
+    }
+    
+    private void dropItem(Command command) 
+    {
+    	if (!command.hasSecondWord())
+    		System.out.println("You haven't selected anything to drop");
+    	else {
+    		String item = command.getSecondWord();
+    		
+    		for (Item i : player.getItems()) {
+    			if (item.equals(i.getDescription()))
+    				player.dropItem(i);
+    				currentRoom.addItem(i);
+    				System.out.println("You dropped an item: " + i.getDescription());
+    				break;
+    		}
+    	}
+    }
+    
+    private void printItems()
+    {
+    	System.out.println("Your items are: ");
+    	for (Item i : player.getItems()) {
+    		System.out.println(i.getDescription() + " ");
+    	}
+    	System.out.println("Total weight is: " + player.getWeight());
     }
     
 
@@ -195,7 +269,9 @@ public class Game
 	 public static void main( String[] args )
 	   	{
 	   		Game game = new Game();
-	   		game.play();
+	   		Player player1 = new Player("Connor");
+	   		player1.setPlayerRoom(game.currentRoom);
+	   		game.play(player1);
 	   		
 	   	}
 }
