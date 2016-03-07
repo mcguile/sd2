@@ -80,9 +80,8 @@ public class Game
     /**
      *  Main play routine.  Loops until end of play.
      */
-    public void play(Player player) 
+    public void play() 
     {            
-    	this.player = player;
         printWelcome();
 
         // Enter the main command loop.  Here we repeatedly read commands and
@@ -195,7 +194,7 @@ public class Game
     	}
     }
     
-    private void pickupItem(Command command)
+    protected void pickupItem(Command command)
     {
     	if (!command.hasSecondWord())
     		System.out.println("You haven't selected anything to pick up");
@@ -217,7 +216,7 @@ public class Game
     	}
     }
     
-    private void dropItem(Command command) 
+    protected void dropItem(Command command) 
     {
     	if (!command.hasSecondWord())
     		System.out.println("You haven't selected anything to drop");
@@ -266,12 +265,18 @@ public class Game
 		return this.currentRoom;
 	}
 	
+	public void createPlayer(Player player)
+	{
+		this.player = player;
+		
+	}
+	
 	 public static void main( String[] args )
 	   	{
 	   		Game game = new Game();
-	   		Player player1 = new Player("Connor");
-	   		player1.setPlayerRoom(game.currentRoom);
-	   		game.play(player1);
+	   		// Uncomment player creation if not running tests
+	   		//game.createPlayer(new Player("Connor"));
+	   		game.play();
 	   		
 	   	}
 }
