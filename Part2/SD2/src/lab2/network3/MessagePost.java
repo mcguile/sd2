@@ -9,7 +9,7 @@ package lab2.network3;
  * @author Michael Kölling and David J. Barnes
  * @version 0.3
  */
-public class MessagePost extends Post
+public class MessagePost extends CommentedPost
 {
     private String message;  // an arbitrarily long, multi-line message
 
@@ -45,5 +45,10 @@ public class MessagePost extends Post
     {
     	super.display();
         System.out.println(message);
+    }
+    
+    public void printShortSummary() 
+    {
+    	System.out.println("Message post from " + super.getUsername());
     }
 }

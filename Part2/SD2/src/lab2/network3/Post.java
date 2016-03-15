@@ -14,8 +14,6 @@ public class Post
 {
     private String username;  // username of the post's author
     private long timestamp;
-    private int likes;
-    private ArrayList<String> comments;
 
     /**
      * Constructor for objects of class Post.
@@ -26,36 +24,6 @@ public class Post
     {
         username = author;
         timestamp = System.currentTimeMillis();
-        likes = 0;
-        comments = new ArrayList<String>();
-    }
-
-    /**
-     * Record one more 'Like' indication from a user.
-     */
-    public void like()
-    {
-        likes++;
-    }
-
-    /**
-     * Record that a user has withdrawn his/her 'Like' vote.
-     */
-    public void unlike()
-    {
-        if (likes > 0) {
-            likes--;
-        }
-    }
-
-    /**
-     * Add a comment to this post.
-     * 
-     * @param text  The new comment to add.
-     */
-    public void addComment(String text)
-    {
-        comments.add(text);
     }
 
     /**
@@ -69,12 +37,12 @@ public class Post
     }
 
     /**
-     * Display the details of this post.
+     * Display the details of this post with likes and comments.
      * 
      * (Currently: Print to the text terminal. This is simulating display 
      * in a web browser for now.)
      */
-    public void display()
+    public void display(int likes, ArrayList<String> comments)
     {
         System.out.println(username);
         System.out.print(timeString(timestamp));
@@ -92,6 +60,16 @@ public class Post
         else {
             System.out.println("   " + comments.size() + " comment(s). Click here to view.");
         }
+    }
+    
+    /**
+     * Basic display of a post.
+     * 
+     */
+    public void display()
+    {
+    	System.out.println(username);
+        System.out.print(timeString(timestamp));
     }
     
     /**
@@ -115,5 +93,10 @@ public class Post
         else {
             return seconds + " seconds ago";
         }
+    }
+    
+    public String getUsername()
+    {
+    	return username;
     }
 }
