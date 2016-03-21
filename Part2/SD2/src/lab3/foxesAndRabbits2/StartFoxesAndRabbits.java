@@ -13,7 +13,7 @@ public class StartFoxesAndRabbits
 {
 	
 	//Default time steps the simulation runs.
-	private static final int DEFAULT_TIME_STEPS = 300;
+	private static final int DEFAULT_TIME_STEPS = 1000;
 	
 	/**
 	 * Main method creates Simulator object.
